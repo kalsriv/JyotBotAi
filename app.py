@@ -9,23 +9,23 @@ st.markdown("""
 <style>
 /* Main background */
 .stApp {
-    background-color: #FDF6EC;
+    background-color: #5A8F7B;
 }
 
 /* Sidebar background */
 [data-testid="stSidebar"] {
-    background-color: #FAEED1;
+    background-color: #A7E8E1;
 }
 
 /* Change font globally */
-html, body, [class*="css"]  {
-    font-family: 'Inter', sans-serif;
+html, body, [class*="css"] { 
+            font-family: 'Cormorant Garamond', serif; 
 }
 
 /* Style buttons */
 .stButton>button {
     background-color: #FF6F00;
-    color: white;
+    color: black;
     border-radius: 8px;
     padding: 0.6rem 1.2rem;
     font-size: 1rem;
