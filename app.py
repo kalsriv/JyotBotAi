@@ -5,8 +5,47 @@ from rag_helper_utility_push import process_document_to_chroma_db, answer_questi
 # Set working directory
 working_dir = os.path.dirname(os.path.abspath(__file__))
 
-st.title("SupplyBhai - Your Supply Chain Assistant 🤖")
-st.subheader("Ask questions about your global supply chain documents")
+st.markdown("""
+<style>
+/* Main background */
+.stApp {
+    background-color: #FDF6EC;
+}
+
+/* Sidebar background */
+[data-testid="stSidebar"] {
+    background-color: #FAEED1;
+}
+
+/* Change font globally */
+html, body, [class*="css"]  {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Style buttons */
+.stButton>button {
+    background-color: #FF6F00;
+    color: white;
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+}
+
+.stButton>button:hover {
+    background-color: #E65100;
+}
+
+/* Style subheaders */
+h2, h3 {
+    color: #6A1B9A;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
+st.title("JyotBot - Your Vedic Astrology Assistant 🌞")
+st.subheader("Ask questions related to Vedic Astrology based on the knowledgebase.")
 
 
 # -------------------------------
@@ -27,18 +66,6 @@ st.markdown("""
 st.markdown('<p class="small-text">⏳ Loading…</p>', unsafe_allow_html=True)
 
 
-# doc_folder = os.path.join(working_dir, "doc_to_upload")
-
-# # Ensure folder exists
-# if not os.path.exists(doc_folder):
-#     st.error(f"Folder not found: {doc_folder}")
-# else:
-#     for file in os.listdir(doc_folder):
-#         if file.endswith(".pdf"):
-#             file_path = os.path.join(doc_folder, file)
-#             process_document_to_chroma_db(file_path)
-
-#     # st.success("Knowledgebase updated!")
 st.markdown(
     "<p style='color: green; font-size: 0.8rem;'>✔️ Knowledgebase updated!</p>",
     unsafe_allow_html=True
@@ -53,5 +80,5 @@ user_question = st.text_area("Ask your question about the knowledgebase")
 if st.button("Answer"):
     answer = answer_question(user_question)
 
-    st.markdown("SupplyBhai says")
+    st.markdown("JyotBot says")
     st.markdown(answer)

@@ -40,31 +40,7 @@ def process_document_to_chroma_db(file_path):
     return 0
 
 
-# # ---------------------------------------------------------
-# # BUILD RAG CHAIN
-# # ---------------------------------------------------------
-# def build_rag_chain(llm, retriever):
-#     prompt = ChatPromptTemplate.from_template("""
-#     You are a supply chain expert. Use ONLY the retrieved context to answer.
 
-#     Context:
-#     {context}
-
-#     Question:
-#     {question}
-
-#     Answer:
-#     """)
-
-#     rag_chain = (
-#         {
-#             "context": lambda x: retriever.invoke(x["question"]),
-#             "question": lambda x: x["question"]
-#         }
-#         | prompt
-#         | llm
-#         | StrOutputParser()
-#     )
 def build_rag_chain(llm, retriever):
     prompt = ChatPromptTemplate.from_template("""
 You are SupplyBhai — a senior global supply chain consultant with 20+ years of experience.
