@@ -156,11 +156,19 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
         "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
     }
 
-    st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
-    
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
-    if response.status_code != 200:
-        return f"API Error: {response.text}"
+    # NEW: print raw response to Streamlit logs
+    print("STATUS:", response.status_code)
+    print("RAW TEXT:", response.text)
 
-    return response.json().get("svg_code", "")
+    try:
+        data = response.json()
+    except Exception as e:
+        return f"JSON parse error: {response.text}"
+
+    return data.get("svg_code", "")
+
+
+
+st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
