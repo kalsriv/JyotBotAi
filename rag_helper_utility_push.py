@@ -1,17 +1,16 @@
 import os
+import requests
+import json
+import streamlit as st
 from dotenv import load_dotenv
-
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_groq import ChatGroq
-
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
-
-
 # Working directory
 working_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -116,11 +115,6 @@ def answer_question(user_question):
     return rag_chain.invoke({"question": user_question})
 
 
-import requests
-import json
-import os
-import streamlit as st
-
 def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
                             latitude, longitude, timezone, ayanamsha="lahiri"):
     """
@@ -146,11 +140,6 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
         }
     }
 
-    # headers = {
-    #     "Content-Type": "application/json",
-    #     "x-api-key": os.getenv("FREE_ASTROLOGY_API_KEY")
-    # }
-
     headers = {
         "Content-Type": "application/json",
         "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
@@ -158,10 +147,6 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
 
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
-    # NEW: print raw response to Streamlit logs
-    # print("STATUS:", response.status_code)
-    # print("RAW TEXT:", response.text)
-    # print("Works till here ")
     try:
         data = response.json()
     except Exception as e:
