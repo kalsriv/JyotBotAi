@@ -11,6 +11,7 @@ from langchain_core.output_parsers import StrOutputParser
 
 load_dotenv()
 
+
 # Working directory
 working_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -68,13 +69,10 @@ Follow these rules:
 9. Do NOT provide personalized readings unless the user explicitly provides birth details (date, time, place). If they do not provide details, give general principles only.
 
 10. Never give medical, legal, or financial prescriptions disguised as astrological advice.
-                                              
-11. Always maintain a respectful and professional tone, upholding the dignity of the Jyotish tradition.
-                                              
+11. Always cite traditional Jyotish texts or principles when relevant to support your interpretations.
 12. If unsure about the relevance of a question, err on the side of caution and refuse to answer.
                                               
-13. Your final answer can use the point format for easy reading.
-                                              
+13. Keep answers concise and focused, avoiding unnecessary elaboration or tangents.                                              
 14. Try to create a Vimshottari Dasha analysis for calculation if the user provides birth details.
 
 ---
@@ -116,3 +114,45 @@ def answer_question(user_question):
     rag_chain = build_rag_chain(llm, retriever)
 
     return rag_chain.invoke({"question": user_question})
+
+
+import requests
+import json
+import os
+
+def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
+                            latitude, longitude, timezone, ayanamsha="lahiri"):
+    """
+    Calls FreeAstrologyAPI to generate the SVG horoscope chart.
+    Returns raw SVG string.
+    """
+
+    url = "https://json.freeastrologyapi.com/horoscope-chart-svg-code"
+
+    payload = {
+        "year": year,
+        "month": month,
+        "date": date,
+        "hours": hours,
+        "minutes": minutes,
+        "seconds": seconds,
+        "latitude": latitude,
+        "longitude": longitude,
+        "timezone": timezone,
+        "config": {
+            "observation_point": "topocentric",
+            "ayanamsha": ayanamsha
+        }
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": os.getenv("FREE_ASTROLOGY_API_KEY")
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+    if response.status_code != 200:
+        return f"API Error: {response.text}"
+
+    return response.json().get("svg_code", "")

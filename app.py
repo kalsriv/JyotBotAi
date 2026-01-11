@@ -72,6 +72,37 @@ st.markdown(
 )
 
 # -------------------------------
+# 2. AHOROSCOPE API DISPLAY
+# -------------------------------
+st.subheader("Birth Details for Horoscope Chart")
+
+col1, col2, col3 = st.columns(3)
+with col1:
+    year = st.number_input("Year", min_value=1900, max_value=2100, value=1990)
+with col2:
+    month = st.number_input("Month", min_value=1, max_value=12, value=1)
+with col3:
+    date = st.number_input("Date", min_value=1, max_value=31, value=1)
+
+col4, col5, col6 = st.columns(3)
+with col4:
+    hours = st.number_input("Hour", min_value=0, max_value=23, value=12)
+with col5:
+    minutes = st.number_input("Minutes", min_value=0, max_value=59, value=0)
+with col6:
+    seconds = st.number_input("Seconds", min_value=0, max_value=59, value=0)
+
+col7, col8 = st.columns(2)
+with col7:
+    latitude = st.number_input("Latitude", value=17.38333)
+with col8:
+    longitude = st.number_input("Longitude", value=78.4666)
+
+timezone = st.number_input("Timezone (e.g., 5.5)", value=5.5)
+
+
+
+# -------------------------------
 # 2. USER QUESTION INPUT
 # -------------------------------
 
@@ -82,3 +113,15 @@ if st.button("Answer"):
 
     st.markdown("JyotBot says")
     st.markdown(answer)
+
+
+from rag_helper_utility_push import get_horoscope_chart_svg
+
+if st.button("Generate Horoscope Chart"):
+    svg_code = get_horoscope_chart_svg(
+        year, month, date, hours, minutes, seconds,
+        latitude, longitude, timezone
+    )
+
+    st.subheader("Your Horoscope Chart (SVG)")
+    st.markdown(svg_code, unsafe_allow_html=True)
