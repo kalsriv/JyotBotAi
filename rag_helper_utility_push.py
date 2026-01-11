@@ -156,7 +156,8 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
         "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
     }
 
-
+    st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
+    
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
     if response.status_code != 200:
