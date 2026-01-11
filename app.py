@@ -110,7 +110,14 @@ if st.button("Generate Horoscope Chart"):
     )
 
     st.subheader("Your Horoscope Chart (SVG)")
+
+    # Debug output
+    st.write("Raw API Response:")
+    st.code(svg_code[:500])
+
+    # Try rendering
     st.markdown(svg_code, unsafe_allow_html=True)
+
 
 # -------------------------------
 # 2. USER QUESTION INPUT
