@@ -145,7 +145,6 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
             "ayanamsha": ayanamsha
         }
     }
-    st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
 
     # headers = {
     #     "Content-Type": "application/json",
@@ -156,6 +155,7 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
         "Content-Type": "application/json",
         "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
     }
+    st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
 
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
