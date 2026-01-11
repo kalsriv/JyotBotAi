@@ -159,9 +159,9 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
     # NEW: print raw response to Streamlit logs
-    print("STATUS:", response.status_code)
-    print("RAW TEXT:", response.text)
-    print("Works till here ")
+    # print("STATUS:", response.status_code)
+    # print("RAW TEXT:", response.text)
+    # print("Works till here ")
     try:
         data = response.json()
     except Exception as e:
