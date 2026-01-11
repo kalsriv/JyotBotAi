@@ -101,6 +101,16 @@ with col8:
 timezone = st.number_input("Timezone (e.g., 5.5)", value=5.5)
 
 
+from rag_helper_utility_push import get_horoscope_chart_svg
+
+if st.button("Generate Horoscope Chart"):
+    svg_code = get_horoscope_chart_svg(
+        year, month, date, hours, minutes, seconds,
+        latitude, longitude, timezone
+    )
+
+    st.subheader("Your Horoscope Chart (SVG)")
+    st.markdown(svg_code, unsafe_allow_html=True)
 
 # -------------------------------
 # 2. USER QUESTION INPUT
@@ -115,13 +125,4 @@ if st.button("Answer"):
     st.markdown(answer)
 
 
-from rag_helper_utility_push import get_horoscope_chart_svg
 
-if st.button("Generate Horoscope Chart"):
-    svg_code = get_horoscope_chart_svg(
-        year, month, date, hours, minutes, seconds,
-        latitude, longitude, timezone
-    )
-
-    st.subheader("Your Horoscope Chart (SVG)")
-    st.markdown(svg_code, unsafe_allow_html=True)
