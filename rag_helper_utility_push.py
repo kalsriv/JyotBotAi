@@ -119,6 +119,7 @@ def answer_question(user_question):
 import requests
 import json
 import os
+import streamlit as st
 
 def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
                             latitude, longitude, timezone, ayanamsha="lahiri"):
