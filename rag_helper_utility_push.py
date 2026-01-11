@@ -167,5 +167,6 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
     except Exception as e:
         return f"JSON parse error: {response.text}"
 
-    return data.get("svg_code", "")
+    # return data.get("svg_code", "")
+    return data.get("output", "")
 
