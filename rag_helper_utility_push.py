@@ -155,12 +155,13 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
         "Content-Type": "application/json",
         "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
     }
-    st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
 
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
     # NEW: print raw response to Streamlit logs
     print("STATUS:", response.status_code)
+    st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
+
     print("RAW TEXT:", response.text)
 
     try:
