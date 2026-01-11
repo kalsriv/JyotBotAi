@@ -169,6 +169,4 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
 
     return data.get("svg_code", "")
 
-
-
 st.write("API KEY:", st.secrets.get("FREE_ASTROLOGY_API_KEY"))
