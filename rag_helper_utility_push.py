@@ -145,10 +145,16 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
         }
     }
 
+    # headers = {
+    #     "Content-Type": "application/json",
+    #     "x-api-key": os.getenv("FREE_ASTROLOGY_API_KEY")
+    # }
+
     headers = {
         "Content-Type": "application/json",
-        "x-api-key": os.getenv("FREE_ASTROLOGY_API_KEY")
+        "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
     }
+
 
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
