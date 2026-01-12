@@ -1,129 +1,164 @@
-import os
-import requests
-import json
-import streamlit as st
-from dotenv import load_dotenv
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
-from langchain_groq import ChatGroq
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+# import os
+# import requests
+# import json
+# import streamlit as st
+# from dotenv import load_dotenv
 
-load_dotenv()
-# Working directory
-working_dir = os.path.dirname(os.path.abspath(__file__))
+# from langchain_text_splitters import RecursiveCharacterTextSplitter
+# from langchain_huggingface import HuggingFaceEmbeddings
+# from langchain_chroma import Chroma
+# from langchain_groq import ChatGroq
+# from langchain_core.prompts import ChatPromptTemplate
+# from langchain_core.output_parsers import StrOutputParser
 
-# Embeddings + LLM
-embedding = HuggingFaceEmbeddings()
+# load_dotenv()
+# # Working directory
+# working_dir = os.path.dirname(os.path.abspath(__file__))
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    temperature=0
-)
+# # Embeddings + LLM
+# embedding = HuggingFaceEmbeddings()
 
-# ---------------------------------------------------------
-# PROCESS DOCUMENT → CHROMA VECTORSTORE (CLOUD-SAFE VERSION)
-# ---------------------------------------------------------
-def process_document_to_chroma_db(file_path):
-    """
-    Cloud-optimized version.
-    Does NOT embed or process PDFs.
-    If the vectorstore exists, skip immediately.
-    """
+# llm = ChatGroq(
+#     model="llama-3.3-70b-versatile",
+#     temperature=0
+# )
 
-    # If vectorstore already exists, skip ingestion
-    if os.path.exists(f"{working_dir}/doc_vectorstore"):
-        return 0
+# # ---------------------------------------------------------
+# # PROCESS DOCUMENT → CHROMA VECTORSTORE (CLOUD-SAFE VERSION)
+# # ---------------------------------------------------------
+# def process_document_to_chroma_db(file_path):
+#     """
+#     Cloud-optimized version.
+#     Does NOT embed or process PDFs.
+#     If the vectorstore exists, skip immediately.
+#     """
 
-    # Cloud should NEVER embed — return immediately
-    return 0
+#     # If vectorstore already exists, skip ingestion
+#     if os.path.exists(f"{working_dir}/doc_vectorstore"):
+#         return 0
 
-
-
-def build_rag_chain(llm, retriever):
-    prompt = ChatPromptTemplate.from_template("""
-You are SupplyBhai — a senior global supply chain consultant with 20+ years of experience.
-Your job is to give clear, confident, expert answers based strictly on the retrieved context.
-
-Follow these rules:
+#     # Cloud should NEVER embed — return immediately
+#     return 0
 
 
-1. You ONLY answer questions that are directly related to Indian astrology (Jyotish), including birth charts, planetary positions, houses, nakshatras, yogas, doshas, dashas, transits, remedies, and traditional interpretive principles.
 
-2. If the user asks anything outside Indian astrology — such as medicine, finance, legal advice, psychology, therapy, modern astronomy, or unrelated academic topics — you MUST politely refuse and say the question is outside your domain.
+# def build_rag_chain(llm, retriever):
+#     prompt = ChatPromptTemplate.from_template("""
+# You are SupplyBhai — a senior global supply chain consultant with 20+ years of experience.
+# Your job is to give clear, confident, expert answers based strictly on the retrieved context.
 
-3. Do NOT create analogies, metaphors, or forced interpretations to make an unrelated question seem relevant to astrology.
+# Follow these rules:
 
-4. Never mention the words “context”, “retriever”, “documents”, or “PDF”.
 
-5. Never explain what information is missing. If the question is in-domain, answer using standard Jyotish principles. If it is out-of-domain, politely decline.
+# 1. You ONLY answer questions that are directly related to Indian astrology (Jyotish), including birth charts, planetary positions, houses, nakshatras, yogas, doshas, dashas, transits, remedies, and traditional interpretive principles.
 
-6. When answering in-domain questions, write like a traditional Jyotish practitioner: clear, structured, and rooted in classical astrological logic.
+# 2. If the user asks anything outside Indian astrology — such as medicine, finance, legal advice, psychology, therapy, modern astronomy, or unrelated academic topics — you MUST politely refuse and say the question is outside your domain.
 
-7. Provide practical, text-based astrological insights — not predictions of guaranteed outcomes, medical claims, or psychological diagnoses.
+# 3. Do NOT create analogies, metaphors, or forced interpretations to make an unrelated question seem relevant to astrology.
 
-8. Avoid deterministic or fear‑based language. Frame interpretations as tendencies, influences, or potentials, not certainties.
+# 4. Never mention the words “context”, “retriever”, “documents”, or “PDF”.
 
-9. Do NOT provide personalized readings unless the user explicitly provides birth details (date, time, place). If they do not provide details, give general principles only.
+# 5. Never explain what information is missing. If the question is in-domain, answer using standard Jyotish principles. If it is out-of-domain, politely decline.
 
-10. Never give medical, legal, or financial prescriptions disguised as astrological advice.
-11. Always cite traditional Jyotish texts or principles when relevant to support your interpretations.
-12. If unsure about the relevance of a question, err on the side of caution and refuse to answer.
+# 6. When answering in-domain questions, write like a traditional Jyotish practitioner: clear, structured, and rooted in classical astrological logic.
+
+# 7. Provide practical, text-based astrological insights — not predictions of guaranteed outcomes, medical claims, or psychological diagnoses.
+
+# 8. Avoid deterministic or fear‑based language. Frame interpretations as tendencies, influences, or potentials, not certainties.
+
+# 9. Do NOT provide personalized readings unless the user explicitly provides birth details (date, time, place). If they do not provide details, give general principles only.
+
+# 10. Never give medical, legal, or financial prescriptions disguised as astrological advice.
+# 11. Always cite traditional Jyotish texts or principles when relevant to support your interpretations.
+# 12. If unsure about the relevance of a question, err on the side of caution and refuse to answer.
                                               
-13. Keep answers concise and focused, avoiding unnecessary elaboration or tangents.                                              
-14. Try to create a Vimshottari Dasha analysis for calculation if the user provides birth details.
+# 13. Keep answers concise and focused, avoiding unnecessary elaboration or tangents.                                              
+# 14. Try to create a Vimshottari Dasha analysis for calculation if the user provides birth details.
 
----
+# ---
 
-### Retrieved Information:
-{context}
+# ### Retrieved Information:
+# {context}
 
-### User Question:
-{question}
+# ### User Question:
+# {question}
 
-### Expert Answer:
-""")
+# ### Expert Answer:
+# """)
 
-    rag_chain = (
-        {
-            "context": lambda x: retriever.invoke(x["question"]),
-            "question": lambda x: x["question"]
-        }
-        | prompt
-        | llm
-        | StrOutputParser()
-    )
+#     rag_chain = (
+#         {
+#             "context": lambda x: retriever.invoke(x["question"]),
+#             "question": lambda x: x["question"]
+#         }
+#         | prompt
+#         | llm
+#         | StrOutputParser()
+#     )
 
-    return rag_chain
-
-
-
-# ---------------------------------------------------------
-# ANSWER USER QUESTION
-# ---------------------------------------------------------
-def answer_question(user_question):
-    vectordb = Chroma(
-        persist_directory=f"{working_dir}/doc_vectorstore",
-        embedding_function=embedding
-    )
-
-    retriever = vectordb.as_retriever()
-
-    rag_chain = build_rag_chain(llm, retriever)
-
-    return rag_chain.invoke({"question": user_question})
+#     return rag_chain
 
 
-def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
-                            latitude, longitude, timezone, ayanamsha="lahiri"):
-    """
-    Calls FreeAstrologyAPI to generate the SVG horoscope chart.
-    Returns raw SVG string.
-    """
 
-    url = "https://json.freeastrologyapi.com/horoscope-chart-svg-code"
+# # ---------------------------------------------------------
+# # ANSWER USER QUESTION
+# # ---------------------------------------------------------
+# def answer_question(user_question):
+#     vectordb = Chroma(
+#         persist_directory=f"{working_dir}/doc_vectorstore",
+#         embedding_function=embedding
+#     )
 
+#     retriever = vectordb.as_retriever()
+
+#     rag_chain = build_rag_chain(llm, retriever)
+
+#     return rag_chain.invoke({"question": user_question})
+
+
+# def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
+#                             latitude, longitude, timezone, ayanamsha="lahiri"):
+#     """
+#     Calls FreeAstrologyAPI to generate the SVG horoscope chart.
+#     Returns raw SVG string.
+#     """
+
+#     url = "https://json.freeastrologyapi.com/horoscope-chart-svg-code"
+
+#     payload = {
+#         "year": year,
+#         "month": month,
+#         "date": date,
+#         "hours": hours,
+#         "minutes": minutes,
+#         "seconds": seconds,
+#         "latitude": latitude,
+#         "longitude": longitude,
+#         "timezone": timezone,
+#         "config": {
+#             "observation_point": "topocentric",
+#             "ayanamsha": ayanamsha
+#         }
+#     }
+
+#     headers = {
+#         "Content-Type": "application/json",
+#         "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
+#     }
+
+#     response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+#     try:
+#         data = response.json()
+#     except Exception as e:
+#         return f"JSON parse error: {response.text}"
+
+#     # return data.get("svg_code", "")
+#     return data.get("output", "")
+
+def get_horoscope_chart_data(year, month, date, hours, minutes, seconds, latitude, longitude, timezone, ayanamsha="lahiri"):
+    """ Calls FreeAstrologyAPI to generate the horoscope chart data. Returns chart data as a dictionary. """
+    url = "https://json.freeastrologyapi.com/horoscope-chart-url"
     payload = {
         "year": year,
         "month": month,
@@ -139,19 +174,49 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
             "ayanamsha": ayanamsha
         }
     }
-
     headers = {
         "Content-Type": "application/json",
         "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
     }
-
     response = requests.post(url, headers=headers, data=json.dumps(payload))
-
     try:
         data = response.json()
+        return data
     except Exception as e:
-        return f"JSON parse error: {response.text}"
+        return f"Error: {response.text}"
 
-    # return data.get("svg_code", "")
-    return data.get("output", "")
+def answer_question(user_question, chart_data=None):
+    vectordb = Chroma(
+        persist_directory=f"{working_dir}/doc_vectorstore",
+        embedding_function=embedding
+    )
+    retriever = vectordb.as_retriever()
+    rag_chain = build_rag_chain(llm, retriever)
+    context = {"question": user_question}
+    if chart_data:
+        context["chart_data"] = chart_data
+    return rag_chain.invoke(context)
 
+def build_rag_chain(llm, retriever):
+    prompt = ChatPromptTemplate.from_template("""
+    You are SupplyBhai — a senior global supply chain consultant with 20+ years of experience.
+    ...
+    ### Retrieved Information:
+    {context}
+    ### Horoscope Chart Data:
+    {chart_data}
+    ### User Question:
+    {question}
+    ### Expert Answer:
+    """)
+    rag_chain = (
+        {
+            "context": lambda x: retriever.invoke(x["question"]),
+            "chart_data": lambda x: x.get("chart_data", {}),
+            "question": lambda x: x["question"]
+        }
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+    return rag_chain
