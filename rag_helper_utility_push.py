@@ -66,7 +66,7 @@ Follow these rules:
 {question}
 
 ### Expert Jyotish Answer:
-""")
+
 """)
 
     rag_chain = (
