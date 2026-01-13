@@ -121,11 +121,39 @@ if st.button("Generate Horoscope Chart"):
 
 user_question = st.text_area("Ask your question about the knowledgebase")
 
+# 2. THE GENERATE BUTTON (Only ONCE)
+if st.button("Generate Horoscope Chart"):
+    # Save to session state
+    st.session_state.birth_data = {
+        "year": year, "month": month, "date": date,
+        "hours": hours, "minutes": minutes, "seconds": seconds,
+        "latitude": latitude, "longitude": longitude, "timezone": timezone
+    }
+    # Get the SVG
+    st.session_state.svg_code = get_horoscope_chart_svg(**st.session_state.birth_data)
+
+# 3. DISPLAY CHART IF IT EXISTS
+if "svg_code" in st.session_state:
+    st.subheader("Your Horoscope Chart (SVG)")
+    st.markdown(st.session_state.svg_code, unsafe_allow_html=True)
+
+# 4. Q&A LOGIC
+st.divider()
+user_question = st.text_area("Ask JyotBot about your chart:")
+
 if st.button("Answer"):
-    answer = answer_question(user_question)
-
-    st.markdown("JyotBot says")
-    st.markdown(answer)
-
-
-
+    # Import here to ensure it's available
+    from rag_helper_utility_push import get_horoscope_data_text
+    
+    if "birth_data" in st.session_state:
+        with st.spinner("Analyzing your planetary positions..."):
+            # This is the key: getting the TEXT for the LLM to read
+            chart_text = get_horoscope_data_text(**st.session_state.birth_data)
+            full_query = f"CHART DATA: {chart_text}\n\nUSER QUESTION: {user_question}"
+            answer = answer_question(full_query)
+    else:
+        # Fallback if they didn't generate a chart first
+        answer = answer_question(user_question)
+    
+    st.markdown("### JyotBot says")
+    st.info(answer)
