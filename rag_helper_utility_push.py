@@ -116,6 +116,37 @@ def answer_question(user_question):
 
     return rag_chain.invoke({"question": user_question})
 
+def get_horoscope_data_text(year, month, date, hours, minutes, seconds, latitude, longitude, timezone):
+    """
+    Fetches the numeric/text positions of planets to provide context to the LLM.
+    """
+    url = "https://json.freeastrologyapi.com/planets" # Using the planets endpoint
+    
+    payload = {
+        "year": year, "month": month, "date": date,
+        "hours": hours, "minutes": minutes, "seconds": seconds,
+        "latitude": latitude, "longitude": longitude, "timezone": timezone,
+        "settings": { "observation_point": "topocentric", "ayanamsha": "lahiri" }
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": st.secrets["FREE_ASTROLOGY_API_KEY"]
+    }
+
+    try:
+        response = requests.post(url, headers=headers, json=payload)
+        data = response.json()
+        
+        # Format the JSON data into a readable string for the LLM
+        planets = data.get("output", [])
+        context_str = "\nUser's Birth Chart Details:\n"
+        for p in planets:
+            context_str += f"- {p['name']}: House {p['house']}, Sign: {p['sign']}, Degree: {p['fullDegree']:.2f}°\n"
+        return context_str
+    except Exception as e:
+        return ""
+
 
 def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
                             latitude, longitude, timezone, ayanamsha="lahiri"):
@@ -148,6 +179,8 @@ def get_horoscope_chart_svg(year, month, date, hours, minutes, seconds,
     }
 
     response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+
 
     try:
         data = response.json()
