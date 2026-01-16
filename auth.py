@@ -71,7 +71,7 @@ def create_customer_portal(email: str):
     customer = get_or_create_customer(email)
     session = stripe.billing_portal.Session.create(
         customer=customer.id,
-        return_url=st.secrets["BASE_URL"]
+        return_url=st.secrets["ASTRO_BASE_URL"]
     )
     return session.url
 
