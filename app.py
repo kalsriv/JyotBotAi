@@ -2,6 +2,9 @@ import os
 import streamlit as st
 from rag_helper_utility_push import process_document_to_chroma_db, answer_question, get_horoscope_chart_svg, get_horoscope_data_text
 
+from auth import require_subscription 
+require_subscription()
+
 # Set working directory
 working_dir = os.path.dirname(os.path.abspath(__file__))
 
