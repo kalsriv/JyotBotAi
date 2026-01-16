@@ -12,3 +12,4 @@ langchain-chroma
 langchain-groq
 pandas
 requests
+stripe
