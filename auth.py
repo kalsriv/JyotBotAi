@@ -4,7 +4,7 @@ import streamlit as st
 import stripe
 
 # Initialize Stripe
-stripe.api_key = st.secrets["STRIPE_SECRET_KEY"]
+stripe.api_key = st.secrets["ASTRO_TRIAL_DAYS"]
 
 # -----------------------------
 # 1. Customer helpers
@@ -52,14 +52,14 @@ def create_checkout_session(email: str):
         payment_method_types=["card"],
         mode="subscription",
         line_items=[{
-            "price": st.secrets["STRIPE_PRICE_ID"],
+            "price": st.secrets["ASTRO_PRICE_ID"],
             "quantity": 1,
         }],
         subscription_data={
-            "trial_period_days": st.secrets.get("TRIAL_DAYS", 2)
+            "trial_period_days": st.secrets.get("ASTRO_TRIAL_DAYS", 2)
         },
-        success_url=f'{st.secrets["BASE_URL"]}?session_id={{CHECKOUT_SESSION_ID}}',
-        cancel_url=f'{st.secrets["BASE_URL"]}?canceled=true',
+        success_url=f'{st.secrets["ASTRO_BASE_URL"]}?session_id={{CHECKOUT_SESSION_ID}}',
+        cancel_url=f'{st.secrets["ASTRO_BASE_URL"]}?canceled=true',
     )
     return session.url
 
@@ -140,7 +140,7 @@ def require_subscription():
                 st.stop()
 
     with col2:
-        if st.button(f"Start Free Trial ({st.secrets.get('TRIAL_DAYS', 2)} days)"):
+        if st.button(f"Start Free Trial ({st.secrets.get('ASTRO_TRIAL_DAYS', 2)} days)"):
             if not email:
                 st.warning("Please enter your email before subscribing.")
                 st.stop()
