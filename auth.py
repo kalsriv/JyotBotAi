@@ -4,7 +4,8 @@ import streamlit as st
 import stripe
 
 # Initialize Stripe
-stripe.api_key = st.secrets["ASTRO_TRIAL_DAYS"]
+stripe.api_key = st.secrets["ASTRO_STRIPE_SECRET_KEY"]
+
 
 # -----------------------------
 # 1. Customer helpers
