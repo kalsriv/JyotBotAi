@@ -56,7 +56,7 @@ def create_checkout_session(email: str):
             "quantity": 1,
         }],
         subscription_data={
-            "trial_period_days": st.secrets.get("TRIAL_DAYS", 7)
+            "trial_period_days": st.secrets.get("TRIAL_DAYS", 2)
         },
         success_url=f'{st.secrets["BASE_URL"]}?session_id={{CHECKOUT_SESSION_ID}}',
         cancel_url=f'{st.secrets["BASE_URL"]}?canceled=true',
@@ -117,7 +117,7 @@ def require_subscription():
         return
 
     # Otherwise → show login + subscribe UI
-    st.title("SupplyBhai Pro")
+    st.title("AstroBot Pro Subscription Required 🔐")
     st.write("Enter your email to continue or start your free trial.")
 
     email = st.text_input("Work email", value=st.session_state.email or "")
@@ -140,7 +140,7 @@ def require_subscription():
                 st.stop()
 
     with col2:
-        if st.button(f"Start Free Trial ({st.secrets.get('TRIAL_DAYS', 7)} days)"):
+        if st.button(f"Start Free Trial ({st.secrets.get('TRIAL_DAYS', 2)} days)"):
             if not email:
                 st.warning("Please enter your email before subscribing.")
                 st.stop()
