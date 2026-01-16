@@ -17,28 +17,39 @@ def get_or_create_customer(email: str):
         return customers[0]
     return stripe.Customer.create(email=email)
 
+def customer_subscription_status(customer_id: str, price_id: str):
+    subs = stripe.Subscription.list(customer=customer_id, status="all").data
 
-def customer_subscription_status(customer_id: str):
-    """
-    Returns one of:
-    - 'active'
-    - 'trialing'
-    - 'past_due'
-    - 'canceled'
-    - 'incomplete'
-    - 'incomplete_expired'
-    - 'unpaid'
-    - 'none'
-    """
-    subs = stripe.Subscription.list(
-        customer=customer_id,
-        limit=1,
-    ).data
+    for sub in subs:
+        for item in sub["items"]["data"]:
+            if item["price"]["id"] == price_id:
+                return sub.status
 
-    if not subs:
-        return "none"
+    return "none"
 
-    return subs[0].status
+status = customer_subscription_status(customer.id, st.secrets["ASTRO_PRICE_ID"])
+
+# def customer_subscription_status(customer_id: str):
+#     """
+#     Returns one of:
+#     - 'active'
+#     - 'trialing'
+#     - 'past_due'
+#     - 'canceled'
+#     - 'incomplete'
+#     - 'incomplete_expired'
+#     - 'unpaid'
+#     - 'none'
+#     """
+#     subs = stripe.Subscription.list(
+#         customer=customer_id,
+#         limit=1,
+#     ).data
+
+#     if not subs:
+#         return "none"
+
+#     return subs[0].status
 
 
 # -----------------------------
